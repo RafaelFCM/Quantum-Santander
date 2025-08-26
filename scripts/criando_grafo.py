@@ -16,8 +16,8 @@ try:
     # Usamos a base de transações para as conexões
     df_transacoes = pd.read_csv('../data/Base 2 - Transacoes.csv', delimiter=';')
     # E a base analítica (limpa e sem duplicatas) para enriquecer os nós
-    df_analitico = pd.read_csv('../data/Base_Analitica_PJ_Versao_final.csv', delimiter=';')
-    print("Arquivos 'Base 2 - Transacoes.csv' e 'Base_Analitica_PJ_Versao_final.csv' carregados.")
+    df_analitico = pd.read_csv('../data/Base_Analitica_PJ.csv', delimiter=';')
+    print("Arquivos 'Base 2 - Transacoes.csv' e 'Base_Analitica_PJ.csv' carregados.")
 except FileNotFoundError as e:
     print(f"ERRO: Arquivo não encontrado. {e}")
     print("Certifique-se de que os arquivos CSV estão na mesma pasta do script.")

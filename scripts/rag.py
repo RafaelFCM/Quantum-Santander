@@ -8,16 +8,16 @@ from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 
 # --- 1. CONFIGURAÇÃO DA CHAVE DE API DA OPENAI ---
-api_key = "" 
+api_key = "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" 
 
 os.environ["OPENAI_API_KEY"] = api_key
 
 # --- 2. CARREGAR A BASE DE DADOS ANALÍTICA ---
 try:
-    df_analitico = pd.read_csv('../data/Base_Analitica_PJ_Versao_final.csv', delimiter=';')
-    print("Base analítica 'Base_Analitica_PJ_Versao_final.csv' carregada com sucesso.")
+    df_analitico = pd.read_csv('../data/Base_Analitica_PJ.csv', delimiter=';')
+    print("Base analítica 'Base_Analitica_PJ.csv' carregada com sucesso.")
 except FileNotFoundError:
-    print("Erro: O arquivo 'Base_Analitica_PJ_Versao_final.csv' não foi encontrado.")
+    print("Erro: O arquivo 'Base_Analitica_PJ.csv' não foi encontrado.")
     exit()
 
 df_analitico['texto_empresa'] = df_analitico.apply(

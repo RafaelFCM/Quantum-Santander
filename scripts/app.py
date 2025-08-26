@@ -20,7 +20,7 @@ import tempfile
 CHROMA_DB_DIRECTORY = "chroma_db_sem_duplicidade" # <--- USE O NOME QUE VOCÊ CRIOU
 
 # Insira sua chave de API da OpenAI aqui
-OPENAI_API_KEY = ""
+OPENAI_API_KEY = "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"
 
 # =====================================================================================
 # INICIALIZAÇÃO E CARREGAMENTO DE DADOS
@@ -31,7 +31,7 @@ CORS(app)
 
 # --- Carregar Dados ---
 try:
-    df_analitico = pd.read_csv('../data/Base_Analitica_PJ_Versao_final.csv', delimiter=';')
+    df_analitico = pd.read_csv('../data/Base_Analitica_PJ.csv', delimiter=';')
     df_transacoes = pd.read_csv('../data/Base 2 - Transacoes.csv', delimiter=';')
     
     print("Bases de dados carregadas com sucesso.")

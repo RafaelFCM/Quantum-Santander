@@ -190,7 +190,7 @@ try:
         df_analitico[coluna] = df_analitico[coluna].astype(int)
     # ----------------------------------------------------
 
-    nome_arquivo_saida = '../data/Base_Analitica_PJ_Versao_final.csv'
+    nome_arquivo_saida = '../data/Base_Analitica_PJ.csv'
     df_analitico.to_csv(nome_arquivo_saida, index=False, sep=';')
 
     print(f"\nArquivo '{nome_arquivo_saida}' atualizado com todos os tipos de dados corretos!")

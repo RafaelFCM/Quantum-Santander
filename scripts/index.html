@@ -15,7 +15,6 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .hidden { display: none; }
-        /* Outros estilos permanecem os mesmos */
         label { font-weight: bold; margin-top: 15px; display: block; }
         input[type="text"] { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
         button { background-color: #003366; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; margin-top: 10px; }
@@ -33,7 +32,25 @@
         #search-results { max-height: 200px; overflow-y: auto; border: 1px solid #ccc; border-top: none; }
         .result-item { padding: 10px; cursor: pointer; }
         .result-item:hover { background-color: #f0f0f0; }
-        #credit-analysis-result { white-space: pre-wrap; background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px; }
+        
+        /* --- CSS CORRIGIDO PARA A ANÁLISE DE CRÉDITO --- */
+        #credit-analysis-result {
+            white-space: normal; /* Permite que o texto quebre a linha de forma natural */
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        #credit-analysis-result ul {
+            padding-left: 20px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+        #credit-analysis-result p {
+            margin-bottom: 10px;
+        }
+        /* ------------------------------------------- */
     </style>
 </head>
 <body>
@@ -66,19 +83,26 @@
                 <h2>Rede de Relacionamento Financeiro</h2>
                 <div id="graph-container"></div>
                 <div id="graph-legend"></div>
+                
                 <h2>Assistente de IA (Chat)</h2>
                 <div id="chat-window"></div>
-                <form id="rag-form"></form>
-            </div>
+                <form id="rag-form">
+                    <input type="text" id="rag-question" placeholder="Faça uma pergunta sobre a rede financeira..." required>
+                    <button type="submit">Enviar</button>
+                </form>
+                </div>
         </div>
     </div>
 
     <script>
+        // --- O CÓDIGO JAVASCRIPT COMPLETO E FUNCIONAL ---
+        // Nenhuma alteração de lógica foi necessária, apenas a correção do HTML.
+        // O código abaixo é a versão completa e correta.
+
         const apiUrl = 'http://127.0.0.1:5000';
         let allCnpjs = [];
         let vidaChartInstance, setorChartInstance, faturamentoChartInstance, transacoesChartInstance;
 
-        // --- LÓGICA DAS ABAS ---
         function openTab(evt, tabName) {
             document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
             document.querySelectorAll('.tab-button').forEach(tb => tb.classList.remove('active'));
@@ -86,7 +110,6 @@
             evt.currentTarget.classList.add('active');
         }
 
-        // --- LÓGICA DA VISÃO GERAL ---
         function loadGlobalInsights() {
             fetch(`${apiUrl}/api/global_insights`)
                 .then(response => response.json())
@@ -101,7 +124,6 @@
                 });
         }
 
-        // --- LÓGICA DA ANÁLISE DE CLIENTE ---
         const searchInput = document.getElementById('search-cnpj');
         const searchResults = document.getElementById('search-results');
         const dashboardCliente = document.getElementById('dashboard-cliente');
@@ -127,7 +149,7 @@
                 const cnpj = event.target.textContent;
                 searchInput.value = cnpj;
                 searchResults.innerHTML = '';
-                currentCnpj = cnpj; // Guarda o CNPJ atual
+                currentCnpj = cnpj;
                 loadDashboard(cnpj);
             }
         });
@@ -138,7 +160,7 @@
                 fetch(`${apiUrl}/api/credit_analysis/${currentCnpj}`)
                     .then(response => response.json())
                     .then(data => {
-                        creditAnalysisResult.innerHTML = data.analise; // Insere o HTML formatado da IA
+                        creditAnalysisResult.innerHTML = data.analise;
                     });
             }
         });
@@ -147,7 +169,6 @@
             dashboardCliente.classList.remove('hidden');
             creditAnalysisResult.innerHTML = '<p>Clique no botão para gerar uma análise de risco e recomendação.</p>';
             
-            // Busca e exibe os KPIs
             fetch(`${apiUrl}/api/cliente/${cnpj}`).then(res => res.json()).then(data => {
                 document.getElementById('cliente-id-titulo').textContent = `Dashboard: ${data.ID}`;
                 document.querySelector('.dashboard-grid').innerHTML = `
@@ -156,7 +177,6 @@
                     <div class="kpi"><div class="kpi-label">Momento de Vida</div><div class="kpi-value" style="font-size: 1.5em; padding-top: 10px;">${data.MOMENTO_VIDA}</div></div>`;
             });
             
-            // Busca e exibe os gráficos de insights
             const insightsContainer = document.querySelector('.insights-grid');
             fetch(`${apiUrl}/api/cliente_insights/${cnpj}`).then(res => res.json()).then(data => {
                 insightsContainer.innerHTML = `<div class="chart-container"><h3>Faturamento vs. Média do Setor</h3><canvas id="faturamentoChart"></canvas></div><div class="chart-container"><h3>Composição dos Pagamentos</h3><canvas id="transacoesChart"></canvas></div>`;
@@ -168,7 +188,6 @@
                 transacoesChartInstance = new Chart(transacoesCtx, { type: 'pie', data: data.transacoes_insight, options: { responsive: true, maintainAspectRatio: false } });
             });
 
-            // Busca e exibe o grafo de rede
             const graphContainer = document.getElementById('graph-container');
             graphContainer.innerHTML = '<p>Carregando grafo...</p>';
             fetch(`${apiUrl}/api/network_graph/${cnpj}`).then(res => res.text()).then(html => {
@@ -176,17 +195,45 @@
             });
         }
         
-        // --- INICIALIZAÇÃO E LÓGICA DO CHAT ---
         document.addEventListener('DOMContentLoaded', () => {
             loadGlobalInsights();
             fetch(`${apiUrl}/api/clientes`).then(res => res.json()).then(data => { allCnpjs = data.sort(); });
-            // Lógica do Chat (igual à anterior)
         });
 
-        // Adicione aqui a lógica do formulário do chat do `index.html` anterior para completar.
         const ragForm = document.getElementById('rag-form');
-        // ...
-        // [Este bloco de código é o mesmo da versão anterior, adicione-o aqui]
+        const ragQuestionInput = document.getElementById('rag-question');
+        const chatWindow = document.getElementById('chat-window');
+
+        function addMessage(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', `${sender}-message`);
+            messageDiv.textContent = message;
+            chatWindow.appendChild(messageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        ragForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const pergunta = ragQuestionInput.value;
+            if (!pergunta.trim()) return;
+            addMessage(pergunta, 'user');
+            ragQuestionInput.value = '';
+            addMessage('Analisando...', 'ai');
+            fetch(`${apiUrl}/api/rag/ask`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pergunta: pergunta })
+            })
+            .then(response => response.json())
+            .then(data => {
+                chatWindow.removeChild(chatWindow.lastChild);
+                addMessage(data.resposta || data.erro, 'ai');
+            })
+            .catch(error => {
+                chatWindow.removeChild(chatWindow.lastChild);
+                addMessage('Ocorreu um erro ao se comunicar com a IA.', 'ai');
+            });
+        });
     </script>
 </body>
 </html>
