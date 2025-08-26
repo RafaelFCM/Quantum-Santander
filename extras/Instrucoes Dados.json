@@ -1,0 +1,100 @@
+[
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"ID",
+        "Nome L\u00f3gico":"N\u00famero do Registro do cliente",
+        "Tipo":"String",
+        "Especifica\u00e7\u00f5es":"10 mil IDs distintos. Completamente anonimizados."
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"VL_FATU",
+        "Nome L\u00f3gico":"Valor do Faturamento",
+        "Tipo":"Long",
+        "Especifica\u00e7\u00f5es":"Valor do faturamento anual da empresa, de 0 a 300 milh\u00f5es. Valores mascarados, mantendo exclusivamente a ordena\u00e7\u00e3o dos faturamentos das empresas"
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"VL_SLDO",
+        "Nome L\u00f3gico":"Valor do Saldo em Conta corrente na data de refer\u00eancia",
+        "Tipo":"Long",
+        "Especifica\u00e7\u00f5es":"Valor do saldo em conta corrente no dia de fechamento do m\u00eas. Valores mascarados, mantendo exclusivamente caracter\u00edsticas anonimizadas de escala e valores positivos e negativos."
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"DT_ABRT",
+        "Nome L\u00f3gico":"Data de abertura da empresa",
+        "Tipo":"Date",
+        "Especifica\u00e7\u00f5es":"Data de abertura das empresas. Valor de dia e m\u00eas mascarados, podendo variar 10 dias para frente ou para tr\u00e1s e 3 meses para frente ou para tr\u00e1s."
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"DS_CNAE",
+        "Nome L\u00f3gico":"Descri\u00e7\u00e3o do CNAE",
+        "Tipo":"String",
+        "Especifica\u00e7\u00f5es":"Nome l\u00f3gico do CNAE da empresa, utilizando as especifica\u00e7\u00f5es do site p\u00fablico do governo: https:\/\/www.gov.br\/receitafederal\/pt-br\/assuntos\/orientacao-tributaria\/cadastros\/cnpj\/classificacao-nacional-de-atividades-economicas-2013-cnae"
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"DT_REFE",
+        "Nome L\u00f3gico":"Data de refer\u00eancia da Base",
+        "Tipo":"Date",
+        "Especifica\u00e7\u00f5es":"Data de refer\u00eancia da base. S\u00e3o os \u00faltimos dias de 5 meses de janeiro a maio de 2025. Valores finais com range de 5 dias para frente ou para tr\u00e1s."
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":null,
+        "Nome L\u00f3gico":null,
+        "Tipo":null,
+        "Especifica\u00e7\u00f5es":null
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":null,
+        "Nome L\u00f3gico":null,
+        "Tipo":null,
+        "Especifica\u00e7\u00f5es":null
+    },
+    {
+        "Base 1":"Base 2",
+        "Vari\u00e1vel":"Vari\u00e1vel",
+        "Nome L\u00f3gico":"Nome L\u00f3gico",
+        "Tipo":"Tipo",
+        "Especifica\u00e7\u00f5es":"Especifica\u00e7\u00f5es"
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"ID_PGTO",
+        "Nome L\u00f3gico":"ID do cliente que enviou o valor",
+        "Tipo":"String",
+        "Especifica\u00e7\u00f5es":"ID do pagador, ou seja, a origem da transa\u00e7\u00e3o, de onde sai o dinheiro. O pagador tem como atribui\u00e7\u00e3o realizar o pagamento. Cont\u00e9m somente IDs da 1\u00ba tabela."
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"ID_RCBE",
+        "Nome L\u00f3gico":"ID do cliente que recebeu o valor",
+        "Tipo":"String",
+        "Especifica\u00e7\u00f5es":"ID do recebedor, ou seja, quem receptar\u00e1 a transa\u00e7\u00e3o, para onde vai o dinheiro. O recebedor tem como atribui\u00e7\u00e3o receber o pagamento. Cont\u00e9m somente IDs da 1\u00ba tabela"
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"VL",
+        "Nome L\u00f3gico":"Valor transacionado",
+        "Tipo":"Long",
+        "Especifica\u00e7\u00f5es":"Valor transacionado. Valores mascarados, mantendo exclusivamente caracter\u00edsticas anonimizadas de escala. Cont\u00e9m somente valores absolutos. Todo valor na vis\u00e3o do pagador \u00e9 visto como despesa, ou seja, negativo, em contrapartida todo valor na vis\u00e3o recebedor \u00e9 visto como uma entrada, ou seja, positivo."
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"DS_TRAN",
+        "Nome L\u00f3gico":"Descri\u00e7\u00e3o da transa\u00e7\u00e3o, sendo PIX, TED, BOLETO ou SISTEMICO",
+        "Tipo":"String",
+        "Especifica\u00e7\u00f5es":"Descri\u00e7\u00e3o do tipo de transa\u00e7\u00e3o."
+    },
+    {
+        "Base 1":null,
+        "Vari\u00e1vel":"DT_REFE",
+        "Nome L\u00f3gico":"Data de refer\u00eancia da base",
+        "Tipo":"Date",
+        "Especifica\u00e7\u00f5es":"Data de refer\u00eancia da transa\u00e7\u00e3o. Cont\u00e9m somente transa\u00e7\u00f5es de 3 meses, de mar\u00e7o a maio de 2025. As datas podem variar 5 dias para frente ou para tr\u00e1s, mas garantindo que est\u00e3o sempre no m\u00eas de refer\u00eancia em que aconteceu a transa\u00e7\u00e3o."
+    }
+]

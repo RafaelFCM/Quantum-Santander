@@ -1,0 +1,12 @@
+pandas
+numpy
+networkx
+pyvis
+langchain
+openai
+langchain-community
+langchain-chroma
+langchain-openai
+sentence-transformers
+flask
+flask_cors

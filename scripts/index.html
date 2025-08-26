@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Fluxo de Caixa PJ</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: auto; background: white; padding: 25px 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1, h2 { color: #003366; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
+        .tabs { display: flex; border-bottom: 2px solid #e0e0e0; margin-bottom: 20px; }
+        .tab-button { padding: 10px 20px; cursor: pointer; background: none; border: none; font-size: 1.1em; color: #555; }
+        .tab-button.active { color: #003366; border-bottom: 3px solid #003366; font-weight: bold; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .hidden { display: none; }
+        /* Outros estilos permanecem os mesmos */
+        label { font-weight: bold; margin-top: 15px; display: block; }
+        input[type="text"] { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #003366; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; margin-top: 10px; }
+        button:hover { background-color: #0055a4; }
+        .kpi-value { font-size: 2em; font-weight: bold; color: #003366; }
+        .kpi-label { font-size: 1em; color: #555; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .kpi { text-align: center; padding: 20px; background-color: #fafafa; border-radius: 8px; border: 1px solid #e0e0e0; }
+        #chat-window { margin-top: 20px; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-message { padding: 10px 15px; border-radius: 15px; max-width: 70%; line-height: 1.4; }
+        .user-message { background-color: #007bff; color: white; align-self: flex-end; }
+        .ai-message { background-color: #e9ecef; color: #333; align-self: flex-start; }
+        .insights-grid, .global-insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .chart-container { padding: 20px; background-color: #fafafa; border-radius: 8px; border: 1px solid #e0e0e0; }
+        #search-results { max-height: 200px; overflow-y: auto; border: 1px solid #ccc; border-top: none; }
+        .result-item { padding: 10px; cursor: pointer; }
+        .result-item:hover { background-color: #f0f0f0; }
+        #credit-analysis-result { white-space: pre-wrap; background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Portal de Análise de Risco e Fluxo de Caixa</h1>
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'global-view')">Visão Geral da Carteira</button>
+            <button class="tab-button" onclick="openTab(event, 'client-view')">Análise de Cliente Específico</button>
+        </div>
+
+        <div id="global-view" class="tab-content active">
+            <h2>Insights Globais da Carteira de Clientes</h2>
+            <div class="global-insights-grid">
+                <div class="chart-container"><h3>Distribuição por Momento de Vida</h3><canvas id="vidaChart"></canvas></div>
+                <div class="chart-container"><h3>Top 5 Setores por No. de Clientes</h3><canvas id="setorChart"></canvas></div>
+            </div>
+        </div>
+
+        <div id="client-view" class="tab-content">
+            <label for="search-cnpj">Pesquisar e Selecionar Empresa por CNPJ:</label>
+            <input type="text" id="search-cnpj" placeholder="Digite para buscar...">
+            <div id="search-results"></div>
+            <div id="dashboard-cliente" class="hidden">
+                <h2 id="cliente-id-titulo"></h2>
+                <div class="dashboard-grid"></div>
+                <h2>Análise de Crédito por IA <button id="analise-credito-btn">Gerar Análise</button></h2>
+                <div id="credit-analysis-result"><p>Clique no botão para gerar uma análise de risco e recomendação.</p></div>
+                <h2>Insights Adicionais</h2>
+                <div class="insights-grid"></div>
+                <h2>Rede de Relacionamento Financeiro</h2>
+                <div id="graph-container"></div>
+                <div id="graph-legend"></div>
+                <h2>Assistente de IA (Chat)</h2>
+                <div id="chat-window"></div>
+                <form id="rag-form"></form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = 'http://127.0.0.1:5000';
+        let allCnpjs = [];
+        let vidaChartInstance, setorChartInstance, faturamentoChartInstance, transacoesChartInstance;
+
+        // --- LÓGICA DAS ABAS ---
+        function openTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(tb => tb.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        // --- LÓGICA DA VISÃO GERAL ---
+        function loadGlobalInsights() {
+            fetch(`${apiUrl}/api/global_insights`)
+                .then(response => response.json())
+                .then(data => {
+                    const vidaCtx = document.getElementById('vidaChart').getContext('2d');
+                    if(vidaChartInstance) vidaChartInstance.destroy();
+                    vidaChartInstance = new Chart(vidaCtx, { type: 'pie', data: { labels: data.distribuicao_vida.labels, datasets: [{ data: data.distribuicao_vida.data, backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c'] }] } });
+
+                    const setorCtx = document.getElementById('setorChart').getContext('2d');
+                    if(setorChartInstance) setorChartInstance.destroy();
+                    setorChartInstance = new Chart(setorCtx, { type: 'bar', data: { labels: data.top_setores.labels, datasets: [{ label: 'No. de Clientes', data: data.top_setores.data, backgroundColor: '#003366' }] } });
+                });
+        }
+
+        // --- LÓGICA DA ANÁLISE DE CLIENTE ---
+        const searchInput = document.getElementById('search-cnpj');
+        const searchResults = document.getElementById('search-results');
+        const dashboardCliente = document.getElementById('dashboard-cliente');
+        const analiseCreditoBtn = document.getElementById('analise-credito-btn');
+        const creditAnalysisResult = document.getElementById('credit-analysis-result');
+        let currentCnpj = null;
+
+        searchInput.addEventListener('input', () => {
+            const filter = searchInput.value.toUpperCase();
+            searchResults.innerHTML = '';
+            if (!filter) return;
+            const filteredCnpjs = allCnpjs.filter(cnpj => cnpj.toUpperCase().includes(filter));
+            filteredCnpjs.slice(0, 100).forEach(cnpj => {
+                const item = document.createElement('div');
+                item.classList.add('result-item');
+                item.textContent = cnpj;
+                searchResults.appendChild(item);
+            });
+        });
+
+        searchResults.addEventListener('click', (event) => {
+            if (event.target && event.target.classList.contains('result-item')) {
+                const cnpj = event.target.textContent;
+                searchInput.value = cnpj;
+                searchResults.innerHTML = '';
+                currentCnpj = cnpj; // Guarda o CNPJ atual
+                loadDashboard(cnpj);
+            }
+        });
+
+        analiseCreditoBtn.addEventListener('click', () => {
+            if(currentCnpj) {
+                creditAnalysisResult.innerHTML = '<p>Gerando análise... A IA está avaliando o cliente. Isso pode levar alguns segundos.</p>';
+                fetch(`${apiUrl}/api/credit_analysis/${currentCnpj}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        creditAnalysisResult.innerHTML = data.analise; // Insere o HTML formatado da IA
+                    });
+            }
+        });
+
+        function loadDashboard(cnpj) {
+            dashboardCliente.classList.remove('hidden');
+            creditAnalysisResult.innerHTML = '<p>Clique no botão para gerar uma análise de risco e recomendação.</p>';
+            
+            // Busca e exibe os KPIs
+            fetch(`${apiUrl}/api/cliente/${cnpj}`).then(res => res.json()).then(data => {
+                document.getElementById('cliente-id-titulo').textContent = `Dashboard: ${data.ID}`;
+                document.querySelector('.dashboard-grid').innerHTML = `
+                    <div class="kpi"><div class="kpi-label">Faturamento Anual</div><div class="kpi-value">R$ ${data.VL_FATU.toLocaleString('pt-BR')}</div></div>
+                    <div class="kpi"><div class="kpi-label">Saldo em Conta</div><div class="kpi-value">R$ ${data.VL_SLDO.toLocaleString('pt-BR')}</div></div>
+                    <div class="kpi"><div class="kpi-label">Momento de Vida</div><div class="kpi-value" style="font-size: 1.5em; padding-top: 10px;">${data.MOMENTO_VIDA}</div></div>`;
+            });
+            
+            // Busca e exibe os gráficos de insights
+            const insightsContainer = document.querySelector('.insights-grid');
+            fetch(`${apiUrl}/api/cliente_insights/${cnpj}`).then(res => res.json()).then(data => {
+                insightsContainer.innerHTML = `<div class="chart-container"><h3>Faturamento vs. Média do Setor</h3><canvas id="faturamentoChart"></canvas></div><div class="chart-container"><h3>Composição dos Pagamentos</h3><canvas id="transacoesChart"></canvas></div>`;
+                const faturamentoCtx = document.getElementById('faturamentoChart').getContext('2d');
+                if(faturamentoChartInstance) faturamentoChartInstance.destroy();
+                faturamentoChartInstance = new Chart(faturamentoCtx, { type: 'bar', data: data.faturamento_insight, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false } });
+                const transacoesCtx = document.getElementById('transacoesChart').getContext('2d');
+                if(transacoesChartInstance) transacoesChartInstance.destroy();
+                transacoesChartInstance = new Chart(transacoesCtx, { type: 'pie', data: data.transacoes_insight, options: { responsive: true, maintainAspectRatio: false } });
+            });
+
+            // Busca e exibe o grafo de rede
+            const graphContainer = document.getElementById('graph-container');
+            graphContainer.innerHTML = '<p>Carregando grafo...</p>';
+            fetch(`${apiUrl}/api/network_graph/${cnpj}`).then(res => res.text()).then(html => {
+                graphContainer.innerHTML = `<iframe srcdoc="${html.replace(/"/g, '&quot;')}" style="width:100%; height:520px; border:none;"></iframe>`;
+            });
+        }
+        
+        // --- INICIALIZAÇÃO E LÓGICA DO CHAT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGlobalInsights();
+            fetch(`${apiUrl}/api/clientes`).then(res => res.json()).then(data => { allCnpjs = data.sort(); });
+            // Lógica do Chat (igual à anterior)
+        });
+
+        // Adicione aqui a lógica do formulário do chat do `index.html` anterior para completar.
+        const ragForm = document.getElementById('rag-form');
+        // ...
+        // [Este bloco de código é o mesmo da versão anterior, adicione-o aqui]
+    </script>
+</body>
+</html>
