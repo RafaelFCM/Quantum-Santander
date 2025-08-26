@@ -20,7 +20,7 @@ import tempfile
 CHROMA_DB_DIRECTORY = "chroma_db_sem_duplicidade" # <--- USE O NOME QUE VOCÊ CRIOU
 
 # Insira sua chave de API da OpenAI aqui
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = ""
 
 # =====================================================================================
 # INICIALIZAÇÃO E CARREGAMENTO DE DADOS

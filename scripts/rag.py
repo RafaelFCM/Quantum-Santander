@@ -8,7 +8,7 @@ from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 
 # --- 1. CONFIGURAÇÃO DA CHAVE DE API DA OPENAI ---
-api_key = "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" 
+api_key = "" 
 
 os.environ["OPENAI_API_KEY"] = api_key
 
